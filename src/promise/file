@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="./es6-promise.js"></script>
+    </head>
+    <body>
+        <script>
+            function loadImage(file) {
+                var loadImagePromise = function(file) {
+                    return new Promise(function (resolve, reject) {
+                        var fileData = file.files[0];
+                        //读取图片数据
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            var data = e.target.result;
+                            //加载图片获取图片真实宽度和高度
+                            var image = new Image();
+                            image.onload = function() {
+                                resolve(image);
+                            };
+                            image.onerror = reject;
+                            image.src= data;
+                            
+                        };
+                        reader.onerror = reject;
+                        reader.readAsDataURL(fileData);
+                    });
+                };
+                loadImagePromise(file).then(function(image) {
+                    console.log(image.width);
+                    console.log(image.height);
+                }).catch(function() {
+                    console.log();
+                });
+                console.log(file.files[0]);
+            }
+        </script>
+        <input type="file" onchange="loadImage(this);" />
+    </body>
+</html>
